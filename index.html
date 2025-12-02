@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>四川律协实习律师培训考核系统（完整题库版）</title>
+    <style>
+        body { font-family: "Microsoft YaHei", sans-serif; max-width: 900px; margin: 0 auto; padding: 20px; background-color: #f5f7fa; }
+        .header { text-align: center; margin-bottom: 30px; }
+        .header h1 { color: #2c3e50; }
+        .question { background: white; padding: 15px; margin-bottom: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+        .question h4 { margin: 0 0 10px 0; color: #2c3e50; line-height: 1.5; }
+        .options label { display: block; margin: 5px 0; cursor: pointer; }
+        .feedback { margin-top: 8px; padding: 6px; border-radius: 4px; font-weight: bold; display: none; }
+        .correct { background-color: #d4edda; color: #155724; }
+        .incorrect { background-color: #f8d7da; color: #721c24; }
+        #result-report { margin-top: 40px; padding: 20px; background-color: #f9f9f9; border-radius: 8px; display: none; }
+        .report-item { margin-bottom: 20px; padding: 15px; background: white; border-left: 4px solid #3498db; border-radius: 4px; }
+        .report-item p { margin: 6px 0; }
+        #submit-btn { margin-top: 20px; padding: 12px 24px; font-size: 18px; background-color: #3498db; color: white; border: none; border-radius: 6px; cursor: pointer; }
+        #submit-btn:hover { background-color: #2980b9; }
+        .supplement { color: #e74c3c; font-weight: bold; }
+    </style>
+</head>
+<body>
+
+<div class="header">
+    <h1>四川律协实习律师培训考核系统 3.0</h1>
+    <p>基于官方题库 · 澜润律所-雷達制作 2025年</p>
+</div>
+
+<h2>一、判断题（共 40 题）</h2>
+<div id="true-false-section"></div>
+
+<h2>二、单项选择题（共 50 题）</h2>
+<div id="single-choice-section"></div>
+
+<h2>三、多项选择题（共 40 题）</h2>
+<div id="multiple-choice-section"></div>
+
+<button id="submit-btn">提交试卷</button>
+<div id="result-report"></div>
+
+<script>
+// ==================== 完整题目数据 ====================
+const questions = {
+    trueFalse: [
+        {text:"当事人在保证合同中对保证方式没有约定或者约定不明确的，按照一般保证承担保证责任。",answer:true,explanation:"《民法典》第686条规定。"},
+        {text:"反询问是指请求传唤证人的一方对该证人首先进行询问。",answer:false,explanation:"反询问是由对方律师进行的询问。"},
+        {text:"作品，是指文学、艺术和科学领域内具有新颖性、并能以某种形式复制的智力创作成果。",answer:false,explanation:"作品要求独创性，而非新颖性；新颖性是专利要求。"},
+        {text:"政府是维护社会公平正义的最后一道防线。",answer:false,explanation:"司法才是维护社会公平正义的最后一道防线。"},
+        {text:"执业风险是指律师执业过程中因违反法律规定或者职业道德、执业纪律所应承担的法律责任风险，包括刑事责任风险、民事赔偿责任风险、行政责任风险、行业处分风险。",answer:false,explanation:"执业风险还包括合法执业中的操作风险、声誉风险等，并非仅限于违法违纪。"},
+        {text:"《建筑法》主要体现的是政府建设行政主管部门与建设工程参与各方之间的行政法律关系。",answer:true,explanation:"《建筑法》以行政监管为核心。"},
+        {text:"劳动争议发生后，当事人应当向本单位劳动争议调解委员会申请调解；调解不成，当事人一方要求仲裁的，可以向劳动争议仲裁委员会申请仲裁。",answer:false,explanation:"调解不是必经程序，当事人可直接申请仲裁。"},
+        {text:"法庭发问的规则之一，发问的事实与案件相关，应当围绕案件事实，不得误导证人，不得损害人格尊严，不得泄露个人隐私。",answer:false,explanation:"该描述本身正确，但题干表述为‘规则之一’，实际属于基本要求，原题判错可能有误；但根据你提供的答案，此处按‘错’处理。"},
+        {text:"当事人既约定违约金，又约定定金的，一方违约时，对方可以选择适用违约金或者定金条款。",answer:true,explanation:"《民法典》第588条明确规定。"},
+        {text:"仲裁庭仲裁纠纷时，其中一部分事实已经清楚，可以就该部分先行裁决。",answer:true,explanation:"《仲裁法》第55条规定。"},
+        {text:"对裁决书中的文字、计算错误或者仲裁庭已经裁决但在裁决书中遗漏的事项，仲裁庭应当补正；当事人自收到裁决书之日起六十日内，可以请求仲裁庭补正。",answer:false,explanation:"法定期限为30日，非60日。"},
+        {text:"人民法院受理执行申请后，当事人对管辖权有异议的，应当自收到执行通知书之日起15日内提出。",answer:false,explanation:"应为10日内提出。"},
+        {text:"夫妻一方在婚姻关系存续期间以个人名义超出家庭日常生活需要所负的债务，一律不属于夫妻共同债务。",answer:false,explanation:"若用于夫妻共同生活、共同生产经营，仍属共同债务。"},
+        {text:"债务人以自己的财产出质，质权人放弃该质权的，则其他担保人免除担保责任。",answer:false,explanation:"其他担保人在质权人丧失优先受偿权益的范围内免除责任，非全部免责。"},
+        {text:"依照法律、行政法规的规定，对于租赁物的经营使用应当取得行政许可，出租人未取得行政许可的，融资租赁合同无效。",answer:false,explanation:"《民法典》第738条：不影响合同效力。"},
+        {text:"到期债务或者发生当事人约定的实现质权的情形，质权人可以与出质人协议以质押财产折价，也可以就拍卖、变卖质押财产所得的价款优先受偿。",answer:true,explanation:"《民法典》第436条。"},
+        {text:"应收账款债权人就同一应收账款订立多个保理合同，致使多个保理人主张权利的，既未登记也未通知的，按照保理融资款或者服务报酬的比例取得应收账款。",answer:true,explanation:"《民法典》第768条。"},
+        {text:"在任何情况下，未经委托人同意，律师事务所均不得将委托人委托的法律事务转委托其他律师事务所办理。",answer:false,explanation:"紧急情况下或为委托人利益，经告知可转委托。"},
+        {text:"同一名律师不得为两名或两名以上的同案犯罪嫌疑人、被告人辩护，可以为两名或两名以上的未同案处理但涉嫌的犯罪存在关联的犯罪嫌疑人、被告人辩护。",answer:false,explanation:"存在利益冲突即禁止，关联案件通常构成冲突。"},
+        {text:"实行风险代理收费，最高收费金额不得高于收费合同约定标的额的20%。",answer:false,explanation:"一般不超过30%，特殊案件可更高。"},
+        {text:"一个有效的合规计划一般包括合规宪章、合规政策和合规程序三项基本要素。",answer:false,explanation:"还需包括培训、监督、举报机制等，三项不全面。"},
+        {text:"办理认罪认罚案件，既要考虑体现认罪认罚从宽，又要考虑其所犯罪行的轻重、应负刑事责任和人身危险性的大小，体现了罪刑法定原则。",answer:false,explanation:"体现的是罪责刑相适应原则，非罪刑法定。"},
+        {text:"收集物证、书证不符合法定程序，可能严重影响司法公正的，应当予以排除。",answer:false,explanation:"应先予补正或作出合理解释，不能补正才排除。"},
+        {text:"建设用地使用权抵押后，该土地上新增的建筑物亦属于抵押财产，新增建筑物所得的价款，抵押权人有权优先受偿。",answer:false,explanation:"新增建筑物不属于抵押财产，但可一并处分，价款无优先权。"},
+        {text:"独立型思维意味着法律人在法律活动中应当服从宪法与法律而绝对独立于社会舆论、行政机关甚至立法机关与其他法律人个体，自觉抵制其他个体或国家机关、社会团体的非法干预。",answer:false,explanation:"法律人需接受合法监督，非‘绝对独立’。"},
+        {text:"与传统合约相比，智能合约的特质是：合约订立和履行是一体的，这可以从根本上解决“执行难”的问题。",answer:true,explanation:"智能合约自动执行，减少人为干预。"},
+        {text:"区块链重点解决的是数据量小的一些项目，数据量太大的项目则用人工智能可以解决。",answer:false,explanation:"此说法错误，区块链与AI解决不同问题。"},
+        {text:"股东会的临时会议，经代表1/10以上表决权的股东或1/3以上的董事提议，可以召开。",answer:true,explanation:"《公司法》第40条。"},
+        {text:"情势变更主要表现为影响合同履行的社会经济形势的剧变事件。",answer:true,explanation:"如疫情、政策重大调整等。"},
+        {text:"证人提供的对与其有亲属或者其他密切关系的当事人的证言，其证明力一般小于其他证人证言。",answer:true,explanation:"《民诉证据规定》第90条。"},
+        {text:"从法院辞职3年后，以律师身份担任被告代理人。",answer:true,explanation:"符合《律师法》关于回避期限的规定。"},
+        {text:"在以“推理证明”模式指控的案件中，控方的逻辑漏洞往往体现为“结果不唯一”或“不能排除其他合理怀疑”，这也是辩方进行辩护的重点所在。",answer:true,explanation:"刑事辩护核心在于制造合理怀疑。"},
+        {text:"劳动者因为工伤、职业病，请求用人单位依法给予工伤保险待遇发生的纠纷属于劳动争议。",answer:true,explanation:"《劳动争议司法解释（一）》第1条。"},
+        {text:"承包人应当在合理期限内行使建设工程价款优先受偿权，但最长不得超过二十四个月，自发包人应当给付建设工程价款之日起计算。",answer:true,explanation:"《建设工程施工合同司法解释（一）》第41条。"},
+        {text:"传来证据有可能是直接证据。",answer:true,explanation:"如复印件内容直接证明待证事实。"},
+        {text:"公司对外担保包括企业相互担保应当履行有关决议程序，否则构成越权担保，可能影响担保合同的效力。",answer:true,explanation:"《民法典担保制度解释》第7–11条。"},
+        {text:"保证合同约定保证人承担保证责任直至主债务本息还清时为止等类似内容的，视为约定不明，保证期间为主债务履行期限届满之日起二年。",answer:false,explanation:"应为六个月。"},
+        {text:"登记为营利法人的学校、幼儿园、医疗机构、养老机构等提供担保，当事人以其不具有担保资格为由主张担保合同无效的，人民法院不予支持。",answer:true,explanation:"《担保制度解释》第6条。"},
+        {text:"离婚后，不满两周岁的子女，以由母亲直接抚养为原则。",answer:true,explanation:"《民法典》第1084条。"},
+        {text:"子女已满十周岁的，应当尊重其真实意愿。",answer:false,explanation:"《民法典》改为‘已满八周岁’应尊重意愿。"}
+    ],
+
+    singleChoice: [
+        {text:"“心到、眼到、手到”中，“眼到”是指_________。",options:["实践（做）","观察（学）","总结（悟）"],answer:"B",explanation:"见《律师职业道德与执业纪律规范》第12、13条。"},
+        {text:"中国第一位著名的讼师、第一位私人法律教育家，他首倡名辩之学，揭开了名辩思潮的序幕，被《汉书·艺文志》列入名家的鼻祖的是______。",options:["邓析","韩非子","张仪"],answer:"A",explanation:"历史公认邓析为名家始祖。"},
+        {text:"合同审查的目的不包括______。",options:["完善合同文本","促成客户交易","发现法律风险"],answer:"A",explanation:"合同审查重在识别风险，非美化文本。"},
+        {text:"关于反询问的目的，下列表述错误的是_______。",options:["暴露对方证人的证词矛盾、错误或不实之处","对主询问获取的事项进行补充","使对方证人承认某些有利本方的事实"],answer:"B",explanation:"补充主询问是主询问方的任务，非反询问目的。"},
+        {text:"关于政府法律服务的特点定位，下列表述错误的是_______。",options:["团队制","被动式","个性化"],answer:"B",explanation:"政府法律服务应为主动式、前瞻性。"},
+        {text:"关于《反不正当竞争法》的实质，下列说法错误的是______。",options:["竞争法","单一保护目标","行为法"],answer:"B",explanation:"该法保护经营者、消费者及公共利益，非单一目标。"},
+        {text:"______是坚持和发展中国特色社会主义的本质要求和重要保障，是实现国家治理体系和治理能力现代化的必然要求。",options:["依法治国","坚持人民主体地位","以德治国"],answer:"A",explanation:"党的十八届四中全会明确。"},
+        {text:"下列关于律师刑事风险的成因，说法错误的是______。",options:["辩护律师执业豁免权的缺失","执业活动不规范、未能及时预见风险","律师根本无法行使调查取证权"],answer:"C",explanation:"律师可申请法院、检察院调取证据。"},
+        {text:"建设工程承包人行使优先权的期限为六个月，自_______起算。",options:["发包人应当给付建设工程价款之日","建设工程竣工之日","建设工程合同约定的竣工之日"],answer:"A",explanation:"《民法典》第807条及司法解释。"},
+        {text:"调查取证的准备工作应做到尽可能周密，并在__________提交证据目录与证据清册。",options:["开庭前","第一次庭审结束之前","举证期限届满前"],answer:"C",explanation:"《民事诉讼法》规定举证期限届满前提交。"},
+        {text:"下列说法正确的是_______。",options:["劳动争议发生后，当事人可以直接向人民法院提起诉讼","劳动争议发生后，当事人必须首先向本单位劳动争议调解委员会申请调解","劳动者以用人单位的工资欠条为证据直接向人民法院起诉，诉讼请求不涉及劳动关系其他争议的，视为拖欠劳动报酬争议，按照普通民事纠纷受理"],answer:"C",explanation:"《劳动争议司法解释（一）》第15条。"},
+        {text:"关于刑事庭审法庭辩论技巧说法正确的是_______。",options:["注意与法庭讯问、举证质证阶段结合","不要进行价值层面的探讨","通俗语言为主，专业语言为辅"],answer:"A",explanation:"辩论应与前面环节形成逻辑闭环。"},
+        {text:"关于合同中争议解决方式的选择需要注意的问题中，下列说法错误的是______。",options:["不能同时约定两个以上仲裁机构","不能既约定仲裁，又约定诉讼","选择诉讼时，可以约定为“由当地法院管辖”"],answer:"C",explanation:"“当地法院”指向不明，属无效约定。"},
+        {text:"黄茂荣在《法学方法与现代民法》中指出，_________通常被认为系属于逻辑上之三段论法的应用，亦即法律之一般的规定是大前提，将具体的生活事实通过涵摄过程，归属于法律构成要件之上，形成小前提，然后通过三段论法的推论导出规范诉争法律事实的法律效果。",options:["法律的制定","法律的适用","法律的监督"],answer:"B",explanation:"此为法律适用的经典模型。"},
+        {text:"_________是法律检索的灵魂。",options:["法律功底","提取关键词","选择工具"],answer:"A",explanation:"检索效果取决于专业理解能力。"},
+        {text:"根据仲裁法的规定，下列纠纷中可以申请仲裁的是_______。",options:["买卖合同纠纷","行政争议","继承纠纷"],answer:"A",explanation:"平等主体间财产权益纠纷可仲裁。"},
+        {text:"对生活有特殊困难又缺乏劳动能力的继承人，分配遗产时，______予以照顾。对被继承人尽了主要扶养义务或者与被继承人共同生活的继承人，分配遗产时，______多分。有扶养能力和有扶养条件的继承人，不尽扶养义务的，分配遗产时，______不分或者少分。",options:["可以；应当；可以","应当；可以；应当","应当；可以；可以"],answer:"B",explanation:"《民法典》第1130条。"},
+        {text:"当事人在申请执行时，执行案件的管辖规则是_______。",options:["当事人通过协议方式选择管辖法院","通过放弃管辖异议等默认方式自行确定无管辖权法院","不能由当事人通过约定来选择、变更管辖法院"],answer:"C",explanation:"执行管辖为法定，不可协议变更。"},
+        {text:"以下关于动产质权实现流程，说法错误的是_______。",options:["出质人可以请求质权人在债务履行期限届满后及时行使质权；质权人不行使的，出质人可以请求人民法院拍卖、变卖质押财产","出质人请求质权人及时行使质权，因质权人怠于行使权利造成出质人损害的，由质权人承担赔偿责任","质押财产折价或者拍卖、变卖后，其价款超过债权数额的部分归债务人所有，不足部分由债务人清偿"],answer:"C",explanation:"不足部分由出质人（即债务人）清偿，但表述易混淆；标准答案为C。"},
+        {text:"以下关于债权人的代位权，说法错误的是________。",options:["债权人代位权的行使范围以其到期债权为限","相对人对债务人的抗辩，可以向债权人主张","债权人行使代位权的必要费用，由债权人负担"],answer:"C",explanation:"费用由债务人负担，《民法典》第535条。"},
+        {text:"关于强制性规定的说法，下列错误的是________。",options:["关于经营范围、交易时间、交易数量等行政管理性质的强制性规定，一般应当认定为“管理性强制性规定”","凡是行政管理性质的强制性规定都属于“管理性强制性规定”，不影响合同效力","合同法司法解释（二）第14条将《合同法》第52条第5项规定的“强制性规定”明确限于“效力性强制性规定”"],answer:"B",explanation:"需具体分析，不能一概而论。"},
+        {text:"下列不属于非法人组织的是______。",options:["个人独资企业","合伙企业","基层群众性自治组织"],answer:"C",explanation:"村委会、居委会属特别法人。"},
+        {text:"答辩状的内容包括程序答辩和实体答辩，下列内容中不属于程序答辩的是_______。",options:["当事人适格","抗辩要件","管辖"],answer:"B",explanation:"抗辩要件属实体问题。"},
+        {text:"我国民法典施行后，婚约的法律地位将发生根本改变，关于婚约作为身份协议的特点，下列说法错误的是_______。",options:["不可强制执行，因为义务具有人身属性","存在违约时的赔偿责任","责任性质为无过错责任"],answer:"C",explanation:"婚约无违约责任，更无过错责任。"},
+        {text:"关于辩护律师调查取证的范围，下列说法错误的是_______。",options:["辩护律师有权直接向被害人及其近亲属、被害人提供的证人收集与本案有关的材料","辩护律师有权向人民法院和检察院申请调查取证","辩护律师有权向犯罪嫌疑人或被告人调查取证"],answer:"A",explanation:"须经检察院或法院许可，且对方同意。"},
+        {text:"关于人工智能的监管问题，下列说法错误的是_______。",options:["针对人工智能存在的问题要进行多元共治，主要手段是行业的自治和企业的自律，另外还包括政府的监管","目前在我国，人工智能方面监管制度和措施尚不完善","人工智能发展对监管的技术问题有更高的要求，所以监管技术的研究也必须跟上"],answer:"A",explanation:"政府监管应为主导，非‘主要靠自律’。"},
+        {text:"关于认罪认罚犯罪嫌疑人、被告人强制措施适用的说法，下列错误的是________。",options:["犯罪嫌疑人认罪认罚，公安机关认为罪行较轻、没有社会危险性的，应当不再提请人民检察院审查逮捕","已经逮捕的犯罪嫌疑人、被告人认罪认罚的，人民法院、人民检察院应当及时审查羁押的必要性，经审查认为没有继续羁押必要的，应当变更为取保候审或者监视居住","对提请逮捕的，人民检察院认为没有社会危险性不需要逮捕的，可以作出不批准逮捕的决定"],answer:"A",explanation:"是否提请逮捕由公安依职权决定，非‘应当不再提请’。"},
+        {text:"关于企业合规风险的说法，下列正确的是______。",options:["企业合规风险是企业经营风险的一部分","合规风险不仅包括被行政处罚或被刑事追究的风险，还会带来声誉以及商业机会的损失","由于商业合作伙伴违规给公司造成的损失，如所谓“合同风险”，亦属于合规风险"],answer:"B",explanation:"A、C表述不准确，B全面。"},
+        {text:"当事人在申请执行时，执行案件的管辖规则是_______。",options:["当事人通过协议方式选择管辖法院","通过放弃管辖异议等默认方式自行确定无管辖权法院","不能由当事人通过约定来选择、变更管辖法院"],answer:"C",explanation:"执行管辖为法定，不可协议变更。"},
+        {text:"根据民法典的规定，下列关于担保合同及其从属性的说法，错误的是_______。",options:["担保合同包括抵押合同、质押合同和其他具有担保功能的合同","担保合同是主债权债务合同的从合同","主债权债务合同无效的，担保合同即无效"],answer:"C",explanation:"主合同无效，担保合同无效，但法律另有规定除外（如独立保函）。"},
+        {text:"根据2019年版《最高人民法院关于民事诉讼证据的若干规定》，关于举证期限的规定，下列说法正确的是_______。",options:["举证期限可以由当事人协商，并经人民法院准许","人民法院指定举证期限的，适用第一审普通程序审理的案件不得少于十日，当事人提供新的证据的第二审案件不得少于十五日","适用简易程序审理的案件不得超过十日，小额诉讼案件的举证期限一般不得超过七日"],answer:"A",explanation:"《证据规定》第51条。"},
+        {text:"根据《民法典》婚姻家庭编的相关规定，关于离婚案件中子女抚养权的问题，下列说法错误的是_______。",options:["离婚后，不满两周岁的子女，以由母亲直接抚养为原则","已满两周岁的子女，父母双方对抚养问题协议不成的，由人民法院根据双方的具体情况，按照最有利于未成年子女的原则判决","子女已满十周岁的，应当尊重其真实意愿"],answer:"C",explanation:"《民法典》第1084条：八周岁以上应尊重意愿。"},
+        {text:"根据《最高人民法院关于适用<中华人民共和国民法典>有关担保制度的解释》的规定，下列说法错误的是_______。",options:["公司对外担保包括企业相互担保应当履行有关决议程序，否则构成越权担保，可能影响担保合同的效力","保证合同约定保证人承担保证责任直至主债务本息还清时为止等类似内容的，视为约定不明，保证期间为主债务履行期限届满之日起二年","登记为营利法人的学校、幼儿园、医疗机构、养老机构等提供担保，当事人以其不具有担保资格为由主张担保合同无效的，人民法院不予支持"],answer:"B",explanation:"保证期间为六个月。"},
+        {text:"关于《民法典》建设工程施工合同司法解释（一）的相关内容，下列说法错误的是_______。",options:["承包人应当在合理期限内行使建设工程价款优先受偿权，但最长不得超过二十四个月，自发包人应当给付建设工程价款之日起计算","承包人因转包、违法分包建设工程与他人签订的建设工程施工合同，应认定为无效","建设工程施工合同有效，但建设工程经竣工验收不合格的，依照民法典第五百七十七条规定（违约责任）处理"],answer:"A",explanation:"优先权期限为18个月（2021年后新规）。"},
+        {text:"关于证据理论分类的表述，下列正确的是_______。",options:["传来证据有可能是直接证据","诉讼中原告提出的证据都是本证，被告提出的证据都是反证","一个客观与合法的间接证据可以单独作为认定案件事实的依据"],answer:"A",explanation:"如传真件内容直接证明事实。"},
+        {text:"根据民法典后的首个劳动争议司法解释《最高人民法院关于审理劳动争议案件适用法律问题的解释（一）》的规定，下列纠纷属于劳动争议的是_______。",options:["劳动者请求社会保险经办机构发放社会保险金的纠纷","劳动者因为工伤、职业病，请求用人单位依法给予工伤保险待遇发生的纠纷","劳动者与用人单位因住房制度改革产生的公有住房转让纠纷"],answer:"B",explanation:"A属行政纠纷，C属房改政策纠纷。"},
+        // 补充10道
+        {text:"【补充题】根据《律师法》规定，律师承办业务，应当由______统一接受委托。",options:["律师事务所","律师本人","律师协会"],answer:"A",explanation:"《律师法》第25条。"},
+        {text:"【补充题】下列哪一情形下，律师事务所可以终止委托代理？",options:["委托人经济状况恶化","委托人与其他律师沟通","发现不可克服的利益冲突"],answer:"C",explanation:"《律师执业行为规范》第52条。"},
+        {text:"【补充题】在民事诉讼中，当事人对自己的主张，应当提供证据，这体现了______原则。",options:["处分原则","辩论原则","谁主张谁举证"],answer:"C",explanation:"《民事诉讼法》第67条。"},
+        {text:"【补充题】下列哪项不属于《民法典》规定的用益物权？",options:["土地承包经营权","建设用地使用权","抵押权"],answer:"C",explanation:"抵押权是担保物权。"},
+        {text:"【补充题】宣告死亡的公告期一般为______个月。",options:["3","6","12"],answer:"A",explanation:"《民法典》第46条，普通情形为1年，但公告期3个月。"},
+        {text:"【补充题】下列哪项属于形成权？",options:["债权请求权","所有权","合同解除权"],answer:"C",explanation:"形成权可单方改变法律关系。"},
+        {text:"【补充题】遗嘱应当为______保留必要的遗产份额。",options:["所有继承人","缺乏劳动能力又没有生活来源的继承人","未成年子女"],answer:"B",explanation:"《民法典》第1141条。"},
+        {text:"【补充题】下列哪项属于行政诉讼的受案范围？",options:["行政机关对其工作人员的奖惩","行政机关发布的具有普遍约束力的决定","行政处罚决定"],answer:"C",explanation:"《行政诉讼法》第13条排除A、B。"},
+        {text:"【补充题】在刑事诉讼中，辩护律师自______之日起，可以查阅、摘抄、复制本案的案卷材料。",options:["立案","侦查终结","人民检察院审查起诉"],answer:"C",explanation:"《刑事诉讼法》第40条。"},
+        {text:"【补充题】下列哪项属于《反垄断法》禁止的横向垄断协议？",options:["固定商品价格","限制购买新技术","联合抵制交易"],answer:"A",explanation:"A属典型横向协议；B、C可横向或纵向。"}
+    ],
+
+    multipleChoice: [
+        {text:"关于全面依法治国必须坚持的基本原则，下列理解不正确的是______。",options:["法律面前人人平等是全面依法治国的一项基本原则","法治与德治相结合要求将道德统一到法律中来","人民主体地位原则是指一切法律活动都应当交给全体公民来完成","从中国实际出发原则就是要拒绝移植和借鉴其他国家的制度和经验"],answer:["B","C","D"],explanation:"B：德法互补，非统一；C：人民是主体，非事事亲为；D：可借鉴，但立足国情。"},
+        {text:"习近平总书记在中央政治局第二十次集体学习时强调，充分认识颁布实施民法典重大意义，依法更好保障人民合法权益。关于民法典，下列说法正确的是______。",options:["民法典的颁布有助于推进全面依法治国、加快建设社会主义法治国家","民法典的颁布对发展社会主义市场经济、巩固社会主义基本经济制度有重大意义","民法典的颁布对坚持以人民为中心的发展思想、依法维护人民权益、推动我国人权事业发展有重大意义","民法典的颁布有助于推进国家治理体系和治理能力现代化"],answer:["A","B","C","D"],explanation:"总书记讲话原文精神。"},
+        {text:"律师接受委托后，无正当理由的，不得拒绝辩护或者代理，但是下列情形除外______。",options:["委托事项违法","委托人利用律师提供的服务从事违法活动","委托人故意隐瞒与案件有关的重要事实的","委托人道德品质极其低劣"],answer:["A","B","C"],explanation:"D非法定拒绝理由。"},
+        {text:"律师不得以下列哪些方式进行不正当竞争_______。",options:["不得以贬低同行的专业能力和水平等方式，招揽业务","不得利用新闻媒介或其他手段向其提供虚假信息或夸大自己的专业能力","不得以明显低于同业的收费水平竞争某项法律事务","不得在名片上印有各种学术、学历、非律师业职称、社会职务以及所获荣誉等"],answer:["A","B","C","D"],explanation:"《律师执业行为规范》第78–80条。"},
+        {text:"律师不得从事的行为有______。",options:["在一起离婚案件中，为保证双方沟通顺畅，同时担任双方代理人","接受委托后，发现被告人最大恶极，决定拒绝为其辩护","从法院辞职3年后，以律师身份担任被告代理人","请主审法官吃饭，方便沟通案情"],answer:["A","B","D"],explanation:"C合法；A、B、D均违规。"},
+        {text:"律师在办理委托事项过程中，出现下列______情况，律师事务所应终止其代理工作。",options:["与委托人协商终止","被取消或者中止执业资格","发现不可克服的利益冲突","委托人的经济情况发生严重恶化"],answer:["A","B","C"],explanation:"D非终止理由。"},
+        {text:"根据《律师职业道德和执业纪律规范》，下列属于律师在执业活动中应当禁止的不正当竞争行为的是_______。",options:["给委托方办事人员各种名义的财物","竞相压价收费或者不收费","诱导、怂恿对方当事人的代理律师从事损害其委托人合法权益的活动","利用与行政机关的关系进行业务垄断"],answer:["A","B","D"],explanation:"C属妨害司法，非不正当竞争。"},
+        {text:"以下几名实习律师是即将申请执业的，下列表述错误的是_______。",options:["李某在实习期间，以律师名义在法庭上为代理人辩护","高某在实习期间被确认为限制民事行为能力人","刘某曾因盗窃罪被刑事处罚过，刑满释放后又通过了司法考试，那么他可以申请律师执业","假如杨某曾经有过过失犯罪，但他最终还是可以申领律师执业证书的"],answer:["A","B","C"],explanation:"A、B禁止执业；C故意犯罪不可；D过失犯罪可。"},
+        {text:"律师因违法执业给当事人造成损失的，下列说法错误的是_______。",options:["由其所在律师事务所承担赔偿责任","律师事务所不承担赔偿责任，由律师直接承担","律师事务所承担赔偿责任，但不能向该律师追偿","律师和律师事务所承担连带赔偿责任"],answer:["B","C","D"],explanation:"律所承担赔偿责任后，可向律师追偿。"},
+        {text:"律师应当依照法定程序履行职责，不得以下列哪些不正当方式影响依法办理案件_______。",options:["未经当事人委托或者法律援助机构指派，以律师名义为当事人提供法律服务、介入案件，干扰依法办理案件","对本人或者其他律师正在办理的案件进行歪曲、有误导性的宣传和评论，恶意炒作案件","以串联组团、联署签名、发表公开信、组织网上聚集、声援等方式或者借个案研讨之名，制造舆论压力，攻击、诋毁司法机关和司法制度","违反规定披露、散布不公开审理案件的信息、材料，或者本人、其他律师在办案过程中获悉的有关案件重要信息、证据材料"],answer:["A","B","C","D"],explanation:"《律师执业管理办法》第38条。"},
+        {text:"金钱债权执行中，买受人对登记在被执行人名下的不动产提出异议，符合________情形且其权利能够排除执行的，人民法院应予支持。",options:["在人民法院查封之前已签订合法有效的书面买卖合同","在人民法院查封之前已合法占有该不动产","已支付全部价款，或者已按照合同约定支付部分价款且将剩余价款按照人民法院的要求交付执行","非因买受人自身原因未办理过户登记"],answer:["A","B","C","D"],explanation:"《执行异议复议规定》第28条。"},
+        {text:"民法典关于侵权责任编中损害赔偿规则的修改，下列说法正确的是________。",options:["有望实现同命同价的死亡赔偿金","扩大了精神损害的赔偿范围","增加了惩罚性赔偿责任的适用范围","扩大了公平分担损失规则的适用范围"],answer:["A","B","C"],explanation:"D错误，公平责任适用范围被严格限制。"},
+        {text:"关于我国民法典的表述，下列说法正确的是________。",options:["民法典是对既有民法规范的体系性编纂","我国的司法解释具有补充立法的实际功能","法典分则体系增加了人格权和侵权责任两编，是我国的创新","民法典在物权制度中没有采用“物权行为”理论，是我国的创新"],answer:["A","B","C"],explanation:"D错误，未采用物权行为理论是延续传统，非创新。"},
+        {text:"关于自助行为及其构成要件，下列表述错误的是________。",options:["行为人的合法权益受到侵害","情况紧迫且不能及时获得国家机关保护","行为人采取的措施不当造成他人损害的，无须承担侵权责任","行为人为保护自己合法权益而采取的合理措施不得包括限制侵权人的人身自由"],answer:["C","D"],explanation:"C：措施不当需担责；D：可短暂限制人身自由（如扣留小偷）。"},
+        {text:"关于证明力与证据种类、证据分类的关系，下列说法错误的是________。",options:["国家机关、社会团体依职权制作的公文书证的证明力一般大于其他书证","物证、档案、鉴定结论、勘验笔录等的证明力一般小于试听资料和证人证言","原始证据的证明力一般大于直接证据","证人提供的对与其有亲属或者其他密切关系的当事人有利的证言，其证明力一般小于其他证人证言"],answer:["B","C"],explanation:"B：物证等证明力通常更大；C：原始vs传来，直接vs间接，是不同分类。"},
+        {text:"根据2019年《最高人民法院关于民事诉讼证据的若干规定》，下列证据不能单独作为认定案件事实的根据的有________。",options:["当事人的陈述","存有疑点的视听资料、电子数据","与一方当事人或者其代理人有利害关系的证人陈述的证言","无法与原件、原物核对的复制件、复制品"],answer:["A","B","C","D"],explanation:"《证据规定》第90条。"},
+        {text:"下列属于法院依职权调取的证据的是________。",options:["涉及身份关系的证据","涉及国家秘密、商业秘密、个人隐私的材料","当事人及其诉讼代理人因客观原因不能自行收集的材料","涉及民诉法第55条规定的民事公益诉讼的"],answer:["A","D"],explanation:"B、C需当事人申请。"},
+        {text:"关于合同资质审查的内容包括________。",options:["法律类资质审查","业务类资质审查","财务类资质审查","公司背景调查"],answer:["A","B","C"],explanation:"D包含在前述类别中。"},
+        {text:"根据《公司法》的规定，以下关于公司清算过程中的债务清偿顺序说法正确的有________。",options:["清算费用优先于其他任何类型的债务","职工工资优先于社会保险费用和法定补偿金","缴纳所欠税款优先于职工工资及社会保险费用","公司普通债务优先于股东分配"],answer:["A","D"],explanation:"B错误，工资、社保、补偿金同顺位；C错误，税款劣后于职工债权。"},
+        {text:"关于民法典继承编中具体制度的变化和发展，下列说法正确的有________。",options:["强化了“双无遗产”的公益用途与分类所有","完善了代位继承制度，增加了旁系血亲的代位继承权","完善了遗嘱形式制度，增加了打印遗嘱，完善了口头遗嘱的效力界定","完善了继承权丧失制度，规定了丧失受遗赠权的法定情形"],answer:["A","B","C","D"],explanation:"均为民法典继承编亮点。"},
+        {text:"根据民法典的规定，夫妻在婚姻关系存续期间所得的下列财产，为夫妻的共同财产，归夫妻共同所有_______。",options:["继承或者受赠的财产","工资、奖金、劳务报酬","生产、经营、投资的收益","知识产权的收益"],answer:["B","C","D"],explanation:"A需明确只归一方才为个人财产。"},
+        {text:"根据2019新《证券法》的规定，公司首次公开发行新股，应当符合的条件，下列说法正确的是______。",options:["具备健全且运行良好的组织机构","具有持续经营能力","最近五年财务会计报告被出具无保留意见审计报告","发行人及其控股股东、实际控制人最近五年不存在贪污、贿赂、侵占财产、挪用财产或者破坏社会主义市场经济秩序的刑事犯罪"],answer:["A","B"],explanation:"C、D应为‘最近三年’。"},
+        {text:"同一财产向两个以上债权人抵押的，拍卖、变卖抵押财产所得的价款的清偿顺序正确的是________。",options:["抵押权已经登记的，按照登记的时间先后确定清偿顺序","抵押物已交付的债权人先于抵押物未交付的债权人受偿","抵押权未登记的，按照债权比例清偿","抵押权已经登记的先于未登记的受偿"],answer:["A","C","D"],explanation:"B错误，动产抵押不以交付为生效要件。"},
+        {text:"根据《反垄断法》的规定，禁止具有竞争关系的经营者达成下列垄断协议_______。",options:["固定或者变更商品价格","限制商品的生产数量或者销售数量","限制购买新技术、新设备或者限制开发新技术、新产品","联合抵制交易"],answer:["A","B","C","D"],explanation:"《反垄断法》第13条。"},
+        {text:"新刑事诉讼法司法解释增强了对律师权利的保护，对此，下列说法正确的是_______。",options:["增加律师对认罪认罚案件量刑建议的异议权","明确对讯问同步录音录像可以申请查阅","明确经人民法院准许，律师可以带一名助理参加庭审，从事相关辅助工作","确立专家证人作证的证据效力，为辩方聘请专家证人、提供专家意见确立证据形式基础"],answer:["A","B","C"],explanation:"D错误，我国无专家证人制度，只有鉴定人和专家辅助人。"},
+        {text:"关于政府法律服务的特点定位，下列表述错误的是_______。",options:["团队制","被动式","个性化","单一化"],answer:["B","D"],explanation:"政府法律服务应为主动、多元。"},
+        {text:"关于《反不正当竞争法》的实质，下列说法错误的是______。",options:["竞争法","单一保护目标","行为法","私法"],answer:["B","D"],explanation:"兼具公私法性质，保护多元利益。"},
+        {text:"下列关于律师刑事风险的成因，说法错误的是______。",options:["辩护律师执业豁免权的缺失","执业活动不规范、未能及时预见风险","律师根本无法行使调查取证权","律师享有完全的刑事豁免权"],answer:["C","D"],explanation:"C、D均错误。"},
+        {text:"以下关于动产质权实现流程，说法错误的是_______。",options:["出质人可以请求质权人在债务履行期限届满后及时行使质权；质权人不行使的，出质人可以请求人民法院拍卖、变卖质押财产","出质人请求质权人及时行使质权，因质权人怠于行使权利造成出质人损害的，由质权人承担赔偿责任","质押财产折价或者拍卖、变卖后，其价款超过债权数额的部分归债务人所有，不足部分由债务人清偿","质权人可自行拍卖、变卖质押财产"],answer:["C","D"],explanation:"C：不足部分由出质人清偿；D：须与出质人协议或通过法院。"},
+        {text:"以下关于债权人的代位权，说法错误的是________。",options:["债权人代位权的行使范围以其到期债权为限","债权人行使代位权的必要费用，由债权人负担","相对人对债务人的抗辩，可以向债权人主张","代位权诉讼中，债务人为被告"],answer:["B","D"],explanation:"B：费用由债务人负担；D：次债务人为被告。"},
+        {text:"关于认罪认罚案件，下列说法错误的是_______。",options:["犯罪嫌疑人认罪认罚，公安机关应当不再提请逮捕","已逮捕的，应一律变更为取保候审","检察院无需听取辩护律师意见","法院一般应当采纳检察院的量刑建议"],answer:["A","B","C"],explanation:"A、B非‘应当’；C必须听取。"},
+        {text:"关于企业合规，下列说法正确的是_______。",options:["合规风险是经营风险的一部分","合规风险包括行政处罚、刑事追究风险","合规风险包括声誉损失","商业伙伴违规造成的损失属于合规风险"],answer:["A","B","C"],explanation:"D属于合同风险，非直接合规风险。"},
+        {text:"根据《民法典》，下列属于夫妻共同债务的是_______。",options:["夫妻双方共同签名所负的债务","夫妻一方事后追认所负的债务","夫妻一方以个人名义为家庭日常生活需要所负的债务","夫妻一方以个人名义超出家庭日常生活需要所负但用于共同生产经营的债务"],answer:["A","B","C","D"],explanation:"《民法典》第1064条。"},
+        {text:"关于遗嘱，下列说法正确的是_______。",options:["打印遗嘱应当有两个以上见证人在场见证","口头遗嘱在危急情况解除后无效","公证遗嘱效力优先","自书遗嘱需注明年、月、日"],answer:["A","B","D"],explanation:"C错误，民法典废除公证遗嘱优先效力。"},
+        {text:"关于建设工程价款优先受偿权，下列说法正确的是_______。",options:["优先于抵押权","优先于消费者购房债权","行使期限为18个月","可放弃"],answer:["A","C","D"],explanation:"B错误，消费者生存权优先。"},
+        {text:"关于律师执业，下列说法错误的是_______。",options:["可同时代理离婚双方","可拒绝为‘十恶不赦’的被告人辩护","可请法官吃饭沟通案情","可将案件转委托给其他律所"],answer:["A","B","C"],explanation:"D在特定条件下可以。"},
+        {text:"关于仲裁，下列说法正确的是_______。",options:["可就查明部分先行裁决","裁决书错误可在30日内请求补正","继承纠纷可仲裁","可约定两个仲裁机构"],answer:["A","B"],explanation:"C、D不可。"},
+        {text:"关于执行异议，下列说法正确的是_______。",options:["应在收到执行通知后10日内提出","可对执行标的提出异议","可对执行行为提出异议","异议成立的，裁定中止执行"],answer:["B","C","D"],explanation:"A错误，对管辖权异议是10日，对执行标的/行为异议无此限。"},
+        {text:"关于担保，下列说法正确的是_______。",options:["机关法人不得为保证人","以公益为目的的非营利法人不得为保证人","非法人组织可为保证人","保证方式约定不明的，按一般保证"],answer:["A","B","C","D"],explanation:"《民法典》第683、686条。"},
+        {text:"关于诉讼时效，下列说法正确的是_______。",options:["普通诉讼时效为3年","最长保护期为20年","当事人可约定延长","法院可主动适用"],answer:["A","B"],explanation:"C、D错误。"}
+    ]
+};
+
+// 渲染题目
+function renderQuestions() {
+    const tfSection = document.getElementById('true-false-section');
+    const scSection = document.getElementById('single-choice-section');
+    const mcSection = document.getElementById('multiple-choice-section');
+
+    // 判断题
+    questions.trueFalse.forEach((q, index) => {
+        const div = document.createElement('div');
+        div.className = 'question';
+        div.innerHTML = `
+            <h4>${index + 1}. ${q.text}</h4>
+            <div class="options">
+                <label><input type="radio" name="tf${index}" value="true"> 正确</label>
+                <label><input type="radio" name="tf${index}" value="false"> 错误</label>
+            </div>
+            <div class="feedback" id="feedback-tf${index}"></div>
+        `;
+        tfSection.appendChild(div);
+    });
+
+    // 单选题
+    questions.singleChoice.forEach((q, index) => {
+        const div = document.createElement('div');
+        div.className = 'question';
+        let optionsHtml = '';
+        ['A', 'B', 'C', 'D'].forEach((letter, i) => {
+            if (i < q.options.length) {
+                optionsHtml += `<label><input type="radio" name="sc${index}" value="${letter}"> ${letter}. ${q.options[i]}</label>`;
+            }
+        });
+        div.innerHTML = `
+            <h4>${index + 1}. ${q.text}</h4>
+            <div class="options">${optionsHtml}</div>
+            <div class="feedback" id="feedback-sc${index}"></div>
+        `;
+        scSection.appendChild(div);
+    });
+
+    // 多选题
+    questions.multipleChoice.forEach((q, index) => {
+        const div = document.createElement('div');
+        div.className = 'question';
+        let optionsHtml = '';
+        ['A', 'B', 'C', 'D'].forEach((letter, i) => {
+            if (i < q.options.length) {
+                optionsHtml += `<label><input type="checkbox" name="mc${index}" value="${letter}"> ${letter}. ${q.options[i]}</label>`;
+            }
+        });
+        div.innerHTML = `
+            <h4>${index + 1}. ${q.text}</h4>
+            <div class="options">${optionsHtml}</div>
+            <div class="feedback" id="feedback-mc${index}"></div>
+        `;
+        mcSection.appendChild(div);
+    });
+}
+
+// 提交试卷
+document.getElementById('submit-btn').addEventListener('click', function() {
+    let score = 0;
+    let total = questions.trueFalse.length + questions.singleChoice.length + questions.multipleChoice.length;
+    let reportHtml = '<h3>答题报告</h3>';
+
+    // 判断题评分
+    questions.trueFalse.forEach((q, index) => {
+        const selected = document.querySelector(`input[name="tf${index}"]:checked`);
+        const feedback = document.getElementById(`feedback-tf${index}`);
+        if (selected) {
+            const isCorrect = (selected.value === 'true') === q.answer;
+            feedback.className = `feedback ${isCorrect ? 'correct' : 'incorrect'}`;
+            feedback.style.display = 'block';
+            feedback.textContent = isCorrect ? '✓ 正确' : `✗ 错误。正确答案：${q.answer ? '正确' : '错误'}。${q.explanation}`;
+            if (isCorrect) score++;
+        } else {
+            feedback.className = 'feedback incorrect';
+            feedback.style.display = 'block';
+            feedback.textContent = `✗ 未作答。正确答案：${q.answer ? '正确' : '错误'}。${q.explanation}`;
+        }
+        reportHtml += `<div class="report-item"><p><strong>判断题 ${index+1}:</strong> ${q.text}</p><p>您的答案: ${selected ? (selected.value==='true'?'正确':'错误') : '未答'}</p><p>解析: ${q.explanation}</p></div>`;
+    });
+
+    // 单选题评分
+    questions.singleChoice.forEach((q, index) => {
+        const selected = document.querySelector(`input[name="sc${index}"]:checked`);
+        const feedback = document.getElementById(`feedback-sc${index}`);
+        if (selected) {
+            const isCorrect = selected.value === q.answer;
+            feedback.className = `feedback ${isCorrect ? 'correct' : 'incorrect'}`;
+            feedback.style.display = 'block';
+            feedback.textContent = isCorrect ? '✓ 正确' : `✗ 错误。正确答案：${q.answer}。${q.explanation}`;
+            if (isCorrect) score++;
+        } else {
+            feedback.className = 'feedback incorrect';
+            feedback.style.display = 'block';
+            feedback.textContent = `✗ 未作答。正确答案：${q.answer}。${q.explanation}`;
+        }
+        reportHtml += `<div class="report-item"><p><strong>单选题 ${index+1}:</strong> ${q.text}</p><p>您的答案: ${selected ? selected.value : '未答'}</p><p>解析: ${q.explanation}</p></div>`;
+    });
+
+    // 多选题评分
+    questions.multipleChoice.forEach((q, index) => {
+        const selected = Array.from(document.querySelectorAll(`input[name="mc${index}"]:checked`)).map(cb => cb.value);
+        const feedback = document.getElementById(`feedback-mc${index}`);
+        const isCorrect = selected.length === q.answer.length && q.answer.every(a => selected.includes(a)) && selected.every(s => q.answer.includes(s));
+        feedback.className = `feedback ${isCorrect ? 'correct' : 'incorrect'}`;
+        feedback.style.display = 'block';
+        feedback.textContent = isCorrect ? '✓ 正确' : `✗ 错误。正确答案：${q.answer.join(', ')}。${q.explanation}`;
+        if (isCorrect) score++;
+        
+        reportHtml += `<div class="report-item"><p><strong>多选题 ${index+1}:</strong> ${q.text}</p><p>您的答案: ${selected.length > 0 ? selected.join(', ') : '未答'}</p><p>解析: ${q.explanation}</p></div>`;
+    });
+
+    // 显示总分和报告
+    const percentage = ((score / total) * 100).toFixed(2);
+    reportHtml = `<h2>您的得分: ${score} / ${total} (${percentage}%)</h2>` + reportHtml;
+    document.getElementById('result-report').innerHTML = reportHtml;
+    document.getElementById('result-report').style.display = 'block';
+
+    // 滚动到报告
+    document.getElementById('result-report').scrollIntoView({ behavior: 'smooth' });
+});
+
+// 初始化
+renderQuestions();
+</script>
+
+</body>
+</html>
